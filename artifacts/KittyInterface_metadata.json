@@ -1,0 +1,118 @@
+{
+	"compiler": {
+		"version": "0.8.34+commit.80d5c536"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_id",
+						"type": "uint256"
+					}
+				],
+				"name": "getKitty",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "isGestating",
+						"type": "bool"
+					},
+					{
+						"internalType": "bool",
+						"name": "isReady",
+						"type": "bool"
+					},
+					{
+						"internalType": "uint256",
+						"name": "cooldownIndex",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "nextActionAt",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "siringWithId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "birthTime",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "matronId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "sireId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "generation",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "genes",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/cryptoZombies/zombiefeeding.sol": "KittyInterface"
+		},
+		"evmVersion": "osaka",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contracts/cryptoZombies/zombiefactory.sol": {
+			"keccak256": "0x90f84fee7701ca2cb95dfe7eb7880cf98cf014df5152763bd50190aa0cd0e8dd",
+			"license": "GPL 3.0",
+			"urls": [
+				"bzz-raw://4c5587e4f7cf65dec92af2a1a8f7eb3ac19ec7549b80627b3aae2a37724a9175",
+				"dweb:/ipfs/QmSCEwq9WvP98eh4W5zy8YQKLhHLtMbN1NU7aWeFVeZSvz"
+			]
+		},
+		"contracts/cryptoZombies/zombiefeeding.sol": {
+			"keccak256": "0xe22e3c0ecffe999b849adf69e15a227302436b377e391a96c64ca5c59c1b31f5",
+			"license": "GPL 3.0",
+			"urls": [
+				"bzz-raw://0e4cc237f054ccc18883123e2be6c5945c6e1a61dcb615149befe0f6476c3cef",
+				"dweb:/ipfs/QmYRH7QPUBeXG6ExxPXH7Nw4ASfjWJNGmupCdpESBosFJe"
+			]
+		}
+	},
+	"version": 1
+}

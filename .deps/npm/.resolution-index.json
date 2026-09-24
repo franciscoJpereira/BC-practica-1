@@ -1,0 +1,39 @@
+{
+  "contracts/HelloWorld.sol": {
+    "__sources__": {
+      "contracts/HelloWorld.sol": {
+        "content": "//SPDX-License-Identifier: GPL-3.0\npragma solidity ^0.8.30;\n\ncontract HelloWorld {\n    string public greet = \"Hello World!\";\n}",
+        "file": "contracts/HelloWorld.sol"
+      }
+    }
+  },
+  "contracts/BasicStruct.sol": {
+    "__sources__": {
+      "contracts/BasicStruct.sol": {
+        "content": "//SPDX-License-Identifier: GPL-3.0\npragma solidity ^0.8.30;\n\n\n\ncontract StructGen {\n    struct Person {\n        string name;\n        uint8 age;\n    }\n    Person owner = Person(\"Francisco\", 27);\n\n    Person[] public participants;  \n\n    function getOwner() public view returns(string memory) {\n        return owner.name;\n    }\n\n    function getOwnerAge() public view returns(uint8) {\n        return owner.age;\n    }\n\n    function addMe(string calldata name, uint8 age)\n    public {\n        participants.push(Person(name, age));\n    }\n\n    function checkMe(string calldata name)\n    public view returns(bool) {\n        bytes32 encName = keccak256(bytes(name));\n        for (uint32 i = 0; i < participants.length; i++) \n        {\n            if (keccak256(bytes(participants[i].name)) == encName) {\n                return true;\n            }\n        }\n        return false;\n    }\n}",
+        "file": "contracts/BasicStruct.sol"
+      }
+    }
+  },
+  "contracts/cryptoZombies.sol": {
+    "__sources__": {
+      "contracts/cryptoZombies.sol": {
+        "content": "//SPDX-License-Identifier: GPL 3.0\npragma solidity ^0.8.34;\n\ncontract ZombieFactory {\n\n    // declara nuestro evento aquí\n    event NewZombie(uint zombieId, string name, uint dna);\n\n    uint dnaDigits = 16;\n    uint dnaModulus = 10 ** dnaDigits;\n\n    struct Zombie {\n        string name;\n        uint dna;\n    }\n\n    Zombie[] public zombies;\n\n    function _createZombie(string calldata _name, uint _dna) private {\n        zombies.push(Zombie(_name, _dna));\n        // y lánzalo aquí\n        emit NewZombie(zombies.length-1, _name, _dna);\n    }\n\n    function _generateRandomDna(string calldata _str) private view returns (uint) {\n        uint rand = uint(keccak256(abi.encodePacked(_str)));\n        return rand % dnaModulus;\n    }\n\n    function createRandomZombie(string calldata _name) public {\n        uint randDna = _generateRandomDna(_name);\n        _createZombie(_name, randDna);\n    }\n\n}",
+        "file": "contracts/cryptoZombies.sol"
+      }
+    }
+  },
+  "contracts/cryptoZombies/zombiefeeding.sol": {
+    "./zombiefactory.sol": "contracts/cryptoZombies/zombiefactory.sol",
+    "__sources__": {
+      "contracts/cryptoZombies/zombiefeeding.sol": {
+        "content": "//SPDX-License-Identifier: GPL 3.0\npragma solidity ^0.8.34;\n\nimport \"./zombiefactory.sol\";\n\nabstract contract KittyInterface {\n  function getKitty(uint256 _id) virtual external view returns (\n    bool isGestating,\n    bool isReady,\n    uint256 cooldownIndex,\n    uint256 nextActionAt,\n    uint256 siringWithId,\n    uint256 birthTime,\n    uint256 matronId,\n    uint256 sireId,\n    uint256 generation,\n    uint256 genes\n  );\n}\ncontract ZombieFeeding is ZombieFactory {\n\n  address ckAddress = 0x06012c8cf97BEaD5deAe237070F9587f8E7A266d;\n  KittyInterface kittyContract = KittyInterface(ckAddress);\n\n  function feedAndMultiply(uint _zombieId, uint _targetDna, string memory _species) public {\n    require(msg.sender == ZombieFactory.zombieToOwner[_zombieId]);\n    Zombie storage myZombie = zombies[_zombieId];\n    _targetDna = _targetDna % dnaModulus;\n    uint newDna = (myZombie.dna + _targetDna) / 2;\n    if (keccak256(abi.encodePacked(_species)) == keccak256(abi.encodePacked(\"kitty\"))) {\n      newDna = newDna - newDna % 100 + 99;\n    }\n    ZombieFactory._createZombie(\"NoName\", newDna);\n  }\n\n  function feedOnKitty(uint _zombieId, uint _kittyId) public {\n    uint kittyDna;\n    (,,,,,,,,,kittyDna) = kittyContract.getKitty(_kittyId);\n    feedAndMultiply(_zombieId, kittyDna, \"kitty\");\n  }\n\n}\n",
+        "file": "contracts/cryptoZombies/zombiefeeding.sol"
+      },
+      "contracts/cryptoZombies/zombiefactory.sol": {
+        "content": "//SPDX-License-Identifier: GPL 3.0\npragma solidity ^0.8.34;\n\ncontract ZombieFactory {\n\n    // declara nuestro evento aquí\n    event NewZombie(uint zombieId, string name, uint dna);\n\n    uint dnaDigits = 16;\n    uint dnaModulus = 10 ** dnaDigits;\n\n    struct Zombie {\n        string name;\n        uint dna;\n    }\n\n    Zombie[] zombies;\n\n    mapping (uint => address) public zombieToOwner;\n    mapping (address => uint) ownerZombieCount;\n\n    function _createZombie(string memory _name, uint _dna) internal {\n        \n        zombies.push(Zombie(_name, _dna));\n        uint id = zombies.length - 1;\n        zombieToOwner[id] = msg.sender;\n        ownerZombieCount[msg.sender]++;\n        emit NewZombie(id, _name, _dna);\n    }\n\n    function _generateRandomDna(string calldata _str) private view returns (uint) {\n        uint rand = uint(keccak256(abi.encodePacked(_str)));\n        return rand % dnaModulus;\n    }\n\n    function createRandomZombie(string calldata _name) public {\n        uint randDna = _generateRandomDna(_name);\n        _createZombie(_name, randDna);\n    }\n\n}",
+        "file": "contracts/cryptoZombies/zombiefactory.sol"
+      }
+    }
+  }
+}
