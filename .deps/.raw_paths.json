@@ -1,3 +1,6 @@
 {
-  "contracts@0.4.0/cryptoZombies/zombiefactory.sol": ".deps/npm/contracts@0.4.0/cryptoZombies/zombiefactory.sol"
+  "contracts@0.4.0/cryptoZombies/zombiefactory.sol": ".deps/npm/contracts@0.4.0/cryptoZombies/zombiefactory.sol",
+  "@openzeppelin.sol": ".deps/npm/@openzeppelin.sol",
+  "@openzeppelin/contracts@5.6.1/access/Ownable.sol": ".deps/npm/@openzeppelin/contracts@5.6.1/access/Ownable.sol",
+  "@openzeppelin/contracts@5.6.1/utils/Context.sol": ".deps/npm/@openzeppelin/contracts@5.6.1/utils/Context.sol"
 }
