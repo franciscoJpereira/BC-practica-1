@@ -11,16 +11,15 @@ import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 dentro del entorno del juego.
 */
 contract ZombieOwnership is ZombieBattle, ERC721 {
-
     constructor() ERC721("CryptoZombies", "CRZB") {}
 
-    mapping (uint => address) zombieApprovals;
+    mapping(uint256 => address) zombieApprovals;
 
     function balanceOf(address _owner) public view override(ERC721) returns (uint256 _balance) {
         return ownerZombieCount[_owner];
     }
 
-    function _ownerOf(uint256 _tokenId) internal view override(ERC721) returns(address _owner) {
+    function _ownerOf(uint256 _tokenId) internal view override(ERC721) returns (address _owner) {
         return zombieToOwner[_tokenId];
     }
 
@@ -40,5 +39,4 @@ contract ZombieOwnership is ZombieBattle, ERC721 {
         zombieApprovals[_tokenId] = _to;
         emit Approval(msg.sender, _to, _tokenId);
     }
-
 }
