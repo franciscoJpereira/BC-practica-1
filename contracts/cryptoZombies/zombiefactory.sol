@@ -2,9 +2,11 @@
 pragma solidity ^0.8.34;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+//No importo SafeMath en este caso por que para
+//versiones del compilador ^0.8.0 las validaciones
+//de overflow y underflow se incertan de forma automatica.
 
 contract ZombieFactory is Ownable{
-
 
     constructor() Ownable(msg.sender) {
 
@@ -22,6 +24,8 @@ contract ZombieFactory is Ownable{
         uint dna;
         uint32 level;
         uint32 readyTime;
+        uint16 winCount;
+        uint16 lossCount;
     }
 
     Zombie[] zombies;
@@ -31,8 +35,8 @@ contract ZombieFactory is Ownable{
 
 
     function _createZombie(string memory _name, uint _dna) internal {
-        
-        zombies.push(Zombie(_name, _dna, 1, uint32(block.timestamp + 1 days)));
+
+        zombies.push(Zombie(_name, _dna, 1, uint32(block.timestamp + 1 days), 0, 0));
         uint id = zombies.length - 1;
         zombieToOwner[id] = msg.sender;
         ownerZombieCount[msg.sender]++;
