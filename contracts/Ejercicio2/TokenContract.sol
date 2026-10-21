@@ -38,9 +38,7 @@ contract TokenContract {
         return address(this).balance;
     }
 
-
-    function giveToken(address _receiver, uint256 _amount) public onlyOwner {
-        require(users[owner].tokens >= _amount);
+    function giveToken(address _receiver, uint256 _amount) public onlyOwner enoughLeft(_amount) {
         users[owner].tokens -= _amount;
         users[_receiver].tokens += _amount;
     }
