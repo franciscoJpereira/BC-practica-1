@@ -38,6 +38,11 @@ contract RBACContract is ERC1155 {
         _;
     }
 
+    function _update(address from, address to, uint256[] memory ids, uint256[] memory values) internal override {
+        require(from != address(0) && to != address(0), "Permissions are not transferable");
+        super._update(from, to, ids, values);
+    }
+
     function hasRole(address _user, uint256 _roleId) public view roleExists(_roleId) returns(bool) {
         return balanceOf(_user, _roleId) > 0;
     }
