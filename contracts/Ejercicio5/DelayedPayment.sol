@@ -34,8 +34,8 @@ contract DelayPayment is ERC721 {
     struct Payment {
         address beneficiary;
         uint256 amount;
-        uint256 dueTime;
         uint256 payed;
+        uint48 dueTime;
     }
 
     event NewPayment(address _beneficiary, address _debtor, uint256 _id);
@@ -48,7 +48,7 @@ contract DelayPayment is ERC721 {
     //Used to generate unique IDs for the different payments
     uint256 private _counter;
 
-    constructor() ERC721("DelayedPayments", "DPA") {
+    constructor() ERC721("DelayedPayments", "DPA") payable {
         _counter = 0;
     }
 
@@ -65,7 +65,7 @@ contract DelayPayment is ERC721 {
     /*
         @dev creates a payment and emits a NewPayment event
     */
-    function _createPayment(address _debtor, uint256 _dueTime, uint256 _amount, address _beneficiary) private unslashed(_debtor) returns(uint256) {
+    function _createPayment(address _debtor, uint256 _dueTime, uint256 _amount, address _beneficiary) private unslashed(_debtor) returns(uint256 id) {
         uint256 _id = uint256(keccak256(abi.encodePacked(msg.sender, _counter)));
         payments[_id] = Payment(_beneficiary, _amount, _dueTime, 0);
         _counter += 1;
@@ -84,7 +84,7 @@ contract DelayPayment is ERC721 {
         - Requirements:
             - The address creating the payment must have no slashed payments
     */
-    function createPayment(uint256 _dueTime, uint256 _amount, address _beneficiary) public returns(uint256) {
+    function createPayment(uint256 _dueTime, uint256 _amount, address _beneficiary) public returns(uint256 id) {
         return _createPayment(msg.sender, _dueTime, _amount, _beneficiary);
     }
 
@@ -106,7 +106,7 @@ contract DelayPayment is ERC721 {
             revert PaymentErrors.OverpaymentError(_amount, _original.amount);
         }
         _createPayment(_owner, _original.dueTime, _amount, _original.beneficiary);
-        _original.amount -= _amount;
+        _original.amount = _original.amount - _amount;
     }
 
 
@@ -125,7 +125,7 @@ contract DelayPayment is ERC721 {
     */
     function payWithPayment(uint256 _withId, uint256 _paymentId) public {
         address _owner = ownerOf(_paymentId);
-        Payment memory _payment = payments[_paymentId];
+        Payment storage _payment = payments[_paymentId];
         _splitPayment(_withId, _payment.amount);
         _burn(_paymentId);
         if (slashed[msg.sender] > 0) {
@@ -152,7 +152,7 @@ contract DelayPayment is ERC721 {
             revert PaymentErrors.OverpaymentError(msg.value, payment.amount - payment.payed);
         }
 
-        payment.payed += msg.value;
+        payment.payed = payment.payed + msg.value;
     }
 
 
@@ -169,7 +169,7 @@ contract DelayPayment is ERC721 {
     */
     function claim(uint256 _paymentId) public {
         address _owner = ownerOf(_paymentId);
-        Payment storage payment = payments[_paymentId];
+        Payment memory payment = payments[_paymentId];
         if (payment.beneficiary != msg.sender) {
             revert PaymentErrors.NotBeneficiary(msg.sender, _paymentId);
         }
@@ -211,14 +211,15 @@ contract DelayPayment is ERC721 {
         and modifying payments when it is not a transfer.
         Transfering a payment means transfering the rights to claim it later.
     */
-    function _update(address _to, uint256 _paymentId, address _auth) internal override returns(address) {
+    function _update(address _to, uint256 _paymentId, address _auth) internal override returns(address addr) {
         address owner = _ownerOf(_paymentId);
         if (owner == address(0)) {
             return super._update(_to, _paymentId, _auth);
         }
         if (_to != address(0)) {
             //Modification of beneficiary
-            if (msg.sender != payments[_paymentId].beneficiary) {
+            Payment storage payment = payments[_paymentId];
+            if (msg.sender != payment.beneficiary) {
                 revert PaymentErrors.NotBeneficiary(msg.sender, _paymentId);
             }
             payments[_paymentId].beneficiary = _to;
