@@ -51,6 +51,10 @@ contract VestingWallet is Context, Ownable {
         _duration = durationSeconds;
     }
 
+    function time() public view returns(uint256) {
+        return block.timestamp;
+    }
+
     /**
      * @dev The contract should be able to receive Eth.
      */

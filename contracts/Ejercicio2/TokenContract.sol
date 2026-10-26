@@ -53,4 +53,10 @@ contract TokenContract {
         users[owner].tokens -= _amount;
         users[msg.sender].tokens += _amount;
     }
+
+    function withraw() public onlyOwner {
+        address payable _owner = payable(owner);
+        (bool success,) = _owner.call{value: address(this).balance}("");
+        require(success);
+    }
 }

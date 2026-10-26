@@ -13,3 +13,11 @@ A continuacion se muestran la secuencia para la obtencion de ETH en la red sepol
 3. Balance en Metamask final
 
 ![Balance billetera Metamask](./img/Balance_billetera.png)
+
+4. Transaccion a un compañero
+
+![Transaccion a compañero](./img/Transaccion_a_compañero.png)
+
+5. Transaccion de compañero
+
+![Transaccion de compañero](./img/Transaccion_de_compañero.png)
