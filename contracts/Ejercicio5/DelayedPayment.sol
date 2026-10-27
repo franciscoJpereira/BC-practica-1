@@ -27,6 +27,10 @@ interface PaymentErrors {
     //Someone that hasn't the right to claim a payment can't do certain actions
     error NotBeneficiary(address caller, uint256 paymentId);
 
+    error NotYourDebt(address caller,uint256 paymentId);
+
+    error NotInTime();
+
 }
 
 contract DelayPayment is ERC721 {
@@ -66,6 +70,9 @@ contract DelayPayment is ERC721 {
         @dev creates a payment and emits a NewPayment event
     */
     function _createPayment(address _debtor, uint256 _dueTime, uint256 _amount, address _beneficiary) private unslashed(_debtor) returns(uint256 id) {
+        if(block.timestamp>_dueTime){
+            revert PaymentErrors.NotInTime();
+        }
         uint256 _id = uint256(keccak256(abi.encodePacked(msg.sender, _counter)));
         payments[_id] = Payment(_beneficiary, _amount, _dueTime, 0);
         _counter += 1;
@@ -124,7 +131,7 @@ contract DelayPayment is ERC721 {
             - msg.sender must be the owner of Payment[_paymentId]
     */
     function payWithPayment(uint256 _withId, uint256 _paymentId) public {
-        address _owner = ownerOf(_paymentId);
+        ownerOf(_paymentId);
         Payment storage _payment = payments[_paymentId];
         _splitPayment(_withId, _payment.amount);
         _burn(_paymentId);
@@ -148,6 +155,10 @@ contract DelayPayment is ERC721 {
     function pay(uint256 _paymentId) public payable {
         address _owner = ownerOf(_paymentId);
         Payment storage payment = payments[_paymentId];
+        if(msg.sender != _owner){
+            revert PaymentErrors.NotYourDebt(msg.sender, _paymentId);
+        }
+
         if (msg.value > (payment.amount - payment.payed)) {
             revert PaymentErrors.OverpaymentError(msg.value, payment.amount - payment.payed);
         }
